@@ -41,13 +41,13 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="GameObjects\Arena.cs" />
-    <Compile Include="Assets.cs" />
-    <Compile Include="GameObjects\GameObject.cs" />
-    <Compile Include="MainGame.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="src\GameObjects\Arena.cs" />
+    <Compile Include="src\Assets.cs" />
+    <Compile Include="src\GameObjects\GameObject.cs" />
+    <Compile Include="src\MainGame.cs" />
+    <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="GameObjects\Tetromino.cs" />
+    <Compile Include="src\GameObjects\Tetromino.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
