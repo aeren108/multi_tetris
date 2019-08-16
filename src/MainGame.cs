@@ -14,6 +14,8 @@ namespace MultiTetris {
 
         public MainGame() {
             graphics = new GraphicsDeviceManager(this);
+            graphics.PreferredBackBufferWidth = 676;
+            graphics.PreferredBackBufferHeight = 512;
             Content.RootDirectory = "Content";
 
             assets = new Assets();
@@ -48,7 +50,7 @@ namespace MultiTetris {
         }
 
         protected override void Draw(GameTime gameTime) {
-            GraphicsDevice.Clear(Color.SlateGray);
+            GraphicsDevice.Clear(Color.LightBlue);
 
             spriteBatch.Begin();
 

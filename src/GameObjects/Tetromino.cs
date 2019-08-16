@@ -11,13 +11,14 @@ namespace MultiTetris.GameObjects {
     class Tetromino : GameObject {
         private Vector2[] pattern; // coordinates on 4x4 plane
         private Vector2[] buffer; // a buffer array
-        private Vector2[] positions; // positions of tetromino blocks
-        private Vector2 position; // position of tetromino
+        public  Vector2[] positions; // positions of tetromino blocks
+        public Vector2 position; // position of tetromino
 
         private Arena arena;
-        private Texture2D block;
+        public Texture2D block;
 
         private int rotation = 0; //Rotation value 0 = 0, 1 = 90, 2 = 180, 3 = 270;
+        public int id;
         public bool isLanded = false;
 
         private int velLeft = 1;
@@ -31,22 +32,16 @@ namespace MultiTetris.GameObjects {
         private const float TIMER = 0.5f;
         private float timer = TIMER;
 
-        //All tetromino patterns
-        public static readonly Vector2[] T = { new Vector2(1, 0), new Vector2(1, 1), new Vector2(1, 2), new Vector2(0, 1) };
-        public static readonly Vector2[] Z = { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 2) };
-        public static readonly Vector2[] S = { new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), new Vector2(0, 2) };
-        public static readonly Vector2[] L = { new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0), new Vector2(2, 1) };
-        public static readonly Vector2[] J = { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 0), new Vector2(2, 0) };
-        public static readonly Vector2[] I = { new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0), new Vector2(3, 0) };
-        public static readonly Vector2[] O = { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0) };
+        private Random random = new Random();
 
-        public Tetromino(Arena arena, Vector2[] pattern) {
+        public Tetromino(Arena arena) {
             this.arena = arena;
-            this.pattern = pattern;
+            id = random.Next(0, 7);
+            this.pattern = Arena.PATTERNS[id];
 
             positions = new Vector2[pattern.Length];
             buffer = new Vector2[pattern.Length];
-            position = Vector2.Zero;
+            position = new Vector2(random.Next(0, arena.width), 0);
 
             for (int i = 0; i < pattern.Length; i++) {
                 Vector2 v = pattern[i];
@@ -56,10 +51,12 @@ namespace MultiTetris.GameObjects {
 
                 buffer[i] = new Vector2(valX, valY);
             }
+
+            SetPositions();
         }
 
         public void LoadContent() {
-            block = Assets.BLOCK_RED;
+            block = Assets.BLOCKS[id];
         }
 
         private void Rotate(int value) {
@@ -99,7 +96,7 @@ namespace MultiTetris.GameObjects {
             }
         }
 
-        private void SetPositions() {
+        public void SetPositions() {
             Vector2 minVec = GetMinPosition(buffer);
 
             for (int i = 0; i < positions.Length; i++) {
@@ -152,16 +149,30 @@ namespace MultiTetris.GameObjects {
             else
                 velLeft = 1;
 
-            if (maxVec.X + velRight + 1 > arena.width)
+            if (maxVec.X + velRight + 2> arena.width)
                 velRight = 0;
             else
                 velRight = 1;
 
-            if (maxVec.Y + velDown + 1 > arena.height)
+            if (maxVec.Y + velDown + 1 > arena.height) {
                 velDown = 0;
-            else
-                velDown = 1;
-            
+                isLanded = true;
+
+            } else {
+                for (int i = 0; i < positions.Length; i++) {
+                    Vector2 pos = positions[i];
+
+                    int x = (int) pos.X;
+                    int y = (int) pos.Y + 1;
+
+                    if (y < arena.height && y >= 0 && x < arena.width && x >= 0) {
+                        if (arena.arena[x, y] != 8) {
+                            velDown = 0;
+                            isLanded = true;
+                        } 
+                    }
+                }
+            } 
         }
 
         public void Update(GameTime gameTime) {
@@ -201,8 +212,10 @@ namespace MultiTetris.GameObjects {
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            for (int i = 0; i < positions.Length; i++) {
-                spriteBatch.Draw(block, (positions[i] * Arena.blockSize));
+            if (positions != null) {
+                for (int i = 0; i < positions.Length; i++) {
+                    spriteBatch.Draw(block, (positions[i] * Arena.blockSize));
+                }
             }
         }
     }
