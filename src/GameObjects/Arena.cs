@@ -61,10 +61,9 @@ namespace MultiTetris.GameObjects {
         private void SaveTetromino(Tetromino t) {
             for (int i = 0; i < t.positions.Length; i++) {
                 Vector2 pos = t.positions[i];
-                if (pos.Y < height)
+                if (pos.Y >= 0 && pos.Y < height && pos.X >= 0 && pos.X < width) {
                     arena[(int) pos.X, (int) pos.Y] = t.id;
-                else
-                    GameOver();
+                }
             }
         }
 
@@ -83,7 +82,8 @@ namespace MultiTetris.GameObjects {
                 SaveTetromino(curTetromino);
 
                 curTetromino = new Tetromino(this);
-                curTetromino.LoadContent();    
+                curTetromino.LoadContent();
+                
             }
 
             int rowsFilled = 0;
@@ -106,8 +106,16 @@ namespace MultiTetris.GameObjects {
                 score += rowsFilled * (rowsFilled + 50);
         }
 
-        private void GameOver() {
+        private Tetromino GenerateTetromino() {
 
+
+
+            return null;
+        }
+
+        private void GameOver() {
+            ClearArena();
+            Console.WriteLine("Score" + score);
         }
 
         private void DeleteRow(int row) {
@@ -119,10 +127,19 @@ namespace MultiTetris.GameObjects {
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(arenaTexture, Vector2.Zero);
+            //spriteBatch.Draw(arenaTexture, Vector2.Zero);
+
+            for (int i = 0; i < arena.GetLength(0); i++) {
+                for (int j = 0; j < arena.GetLength(1); j++) {
+                    spriteBatch.Draw(Assets.ARENA, new Vector2(i * blockSize, j * blockSize));
+                }
+            }
+
             curTetromino.Draw(spriteBatch);
 
-            spriteBatch.DrawString(font, "Score: " + score, new Vector2(blockSize * 17, blockSize), Color.GhostWhite);
+            spriteBatch.DrawString(font, "Score: " + score, new Vector2(blockSize * 17, blockSize), Color.Red);
+
+            
 
             for (int i = 0; i < arena.GetLength(0); i++) {
                 for (int j = 0; j < arena.GetLength(1); j++) {

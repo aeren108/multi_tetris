@@ -17,6 +17,7 @@ namespace MultiTetris {
         public static Texture2D BLOCK_BURGUNDY;
         public static Texture2D[] BLOCKS;
 
+        public static Texture2D ARENA;
         public static Texture2D TETRIS_ARENA;
 
         public static SpriteFont SCORE_FONT;
@@ -30,6 +31,7 @@ namespace MultiTetris {
             BLOCK_BURGUNDY = Content.Load<Texture2D>("block_burgundy");
 
             TETRIS_ARENA = Content.Load<Texture2D>("tetris_arena");
+            ARENA = Content.Load<Texture2D>("arena");
 
             SCORE_FONT = Content.Load<SpriteFont>("File");
 

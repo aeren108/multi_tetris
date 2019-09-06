@@ -144,35 +144,45 @@ namespace MultiTetris.GameObjects {
             Vector2 minVec = GetMinPosition(positions);
             Vector2 maxVec = GetMaxPosition(positions);
 
-            if (minVec.X - velLeft <= 0)
-                velLeft = 0;
-            else
-                velLeft = 1;
+            bool lb = false, rb = false;
 
-            if (maxVec.X + velRight + 2> arena.width)
-                velRight = 0;
-            else
-                velRight = 1;
+            for (int i = 0; i < positions.Length; i++) {
+                int x = (int) positions[i].X;
+                int y = (int) positions[i].Y;
 
-            if (maxVec.Y + velDown + 1 > arena.height) {
-                velDown = 0;
-                isLanded = true;
+                if (x - 1 < 0)
+                    lb = true;
+                else if (x + 1 >= arena.width)
+                    rb = true;
 
-            } else {
-                for (int i = 0; i < positions.Length; i++) {
-                    Vector2 pos = positions[i];
+                //lb =  (x - 1 < 0) ? true : false;
+                //rb = (x + 1 >= arena.width) ? true : false;
 
-                    int x = (int) pos.X;
-                    int y = (int) pos.Y + 1;
+                if (y + 1 >= arena.height) {
+                    isLanded = true;
+                    velDown = 0;
+                }
 
-                    if (y < arena.height && y >= 0 && x < arena.width && x >= 0) {
-                        if (arena.arena[x, y] != 8) {
-                            velDown = 0;
-                            isLanded = true;
-                        } 
+                if (x >= 0 && x < arena.width && y + 1 < arena.height) {
+                    if (arena.arena[x, y + 1] != 8) {
+                        isLanded = true;
+                        velDown = 0;
                     }
                 }
-            } 
+
+                if (x + 1 < arena.width && x + 1 >= 0 && y < arena.height) {
+                    if (arena.arena[x + 1, y] != 8) {
+                        rb = true;
+                    }
+                } if (x - 1 >= 0 && x - 1 < arena.width && y < arena.height) {
+                    if (arena.arena[x - 1, y] != 8) {
+                        lb = true;
+                    }
+                }
+            }
+
+            velLeft = lb ? 0 : 1;
+            velRight = rb ? 0 : 1;
         }
 
         public void Update(GameTime gameTime) {
@@ -186,7 +196,7 @@ namespace MultiTetris.GameObjects {
             } if (state.IsKeyDown(Keys.S) || state.IsKeyDown(Keys.Down)) {               
                 position.Y += velDown;               
             } else if ((state.IsKeyDown(Keys.A) || state.IsKeyDown(Keys.Left)) && left) { 
-                position.X -= velLeft; 
+                position.X += -velLeft; 
                 left = false;
             } else if ((state.IsKeyDown(Keys.D) || state.IsKeyDown(Keys.Right)) && right ) {              
                 position.X += velRight;
