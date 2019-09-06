@@ -141,9 +141,6 @@ namespace MultiTetris.GameObjects {
         }
 
         private void DetectCollision() {
-            Vector2 minVec = GetMinPosition(positions);
-            Vector2 maxVec = GetMaxPosition(positions);
-
             bool lb = false, rb = false;
 
             for (int i = 0; i < positions.Length; i++) {
@@ -154,9 +151,6 @@ namespace MultiTetris.GameObjects {
                     lb = true;
                 else if (x + 1 >= arena.width)
                     rb = true;
-
-                //lb =  (x - 1 < 0) ? true : false;
-                //rb = (x + 1 >= arena.width) ? true : false;
 
                 if (y + 1 >= arena.height) {
                     isLanded = true;
