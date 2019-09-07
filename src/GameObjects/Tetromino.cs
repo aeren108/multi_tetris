@@ -21,6 +21,8 @@ namespace MultiTetris.GameObjects {
         public int id;
         public bool isLanded = false;
 
+        private float length;
+
         private int velLeft = 1;
         private int velRight = 1;
         private int velDown = 1;
@@ -37,7 +39,7 @@ namespace MultiTetris.GameObjects {
         public Tetromino(Arena arena) {
             this.arena = arena;
             id = random.Next(0, 7);
-            this.pattern = Arena.PATTERNS[id];
+            pattern = Arena.PATTERNS[id];
 
             positions = new Vector2[pattern.Length];
             buffer = new Vector2[pattern.Length];
@@ -51,6 +53,8 @@ namespace MultiTetris.GameObjects {
 
                 buffer[i] = new Vector2(valX, valY);
             }
+
+            length = GetMaxPosition(buffer).X - GetMinPosition(buffer).X + 1;
 
             SetPositions();
         }
@@ -94,16 +98,17 @@ namespace MultiTetris.GameObjects {
                     }
                     break;
             }
+
+            length = GetMaxPosition(buffer).X - GetMinPosition(buffer).X + 1;
         }
 
         public void SetPositions() {
             Vector2 minVec = GetMinPosition(buffer);
 
             for (int i = 0; i < positions.Length; i++) {
-                positions[i].X = buffer[i].X - minVec.X;
-                positions[i].Y = buffer[i].Y - minVec.Y;
-
+                positions[i] = buffer[i] - minVec;
                 positions[i] += position;
+
             }
         }
 
@@ -124,7 +129,7 @@ namespace MultiTetris.GameObjects {
 
         }
 
-        private Vector2 GetMaxPosition(Vector2[] pos) {
+        public Vector2 GetMaxPosition(Vector2[] pos) {
             int maxX = 0, maxY = 0;
 
             for (int i = 0; i < pos.Length; i++) {
@@ -149,7 +154,7 @@ namespace MultiTetris.GameObjects {
 
                 if (x - 1 < 0)
                     lb = true;
-                else if (x + 1 >= arena.width)
+                else if (x + 1 >= arena.arena.GetLength(0))
                     rb = true;
 
                 if (y + 1 >= arena.height) {
@@ -186,6 +191,13 @@ namespace MultiTetris.GameObjects {
             if (state.IsKeyDown(Keys.Space) && space) {
                 rotation++;
                 Rotate(rotation);
+
+                if (position.X + length >= arena.width) {
+                    position.X = arena.width - length;
+
+                    Console.WriteLine("Out");
+                }
+
                 space = false;
             } if (state.IsKeyDown(Keys.S) || state.IsKeyDown(Keys.Down)) {               
                 position.Y += velDown;               

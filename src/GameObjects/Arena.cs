@@ -81,9 +81,12 @@ namespace MultiTetris.GameObjects {
             if (curTetromino.isLanded) {
                 SaveTetromino(curTetromino);
 
+                if (curTetromino.GetMaxPosition(curTetromino.positions).Y <= 0) {
+                    GameOver();
+                }
+
                 curTetromino = new Tetromino(this);
                 curTetromino.LoadContent();
-                
             }
 
             int rowsFilled = 0;
@@ -107,6 +110,7 @@ namespace MultiTetris.GameObjects {
         }
 
         private Tetromino GenerateTetromino() {
+            Tetromino t = new Tetromino(this);
 
 
 
