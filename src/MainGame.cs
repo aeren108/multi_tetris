@@ -14,8 +14,8 @@ namespace MultiTetris {
 
         public MainGame() {
             graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = 676;
-            graphics.PreferredBackBufferHeight = 512;
+            graphics.PreferredBackBufferWidth = 12 * 32;
+            graphics.PreferredBackBufferHeight = 19 * 32;
             Content.RootDirectory = "Content";
 
             assets = new Assets();
@@ -23,7 +23,7 @@ namespace MultiTetris {
         }
 
         protected override void Initialize() {
-            arena = new Arena(16, 16);
+            arena = new Arena(12, 18);
 
             base.Initialize();
         }
@@ -50,7 +50,7 @@ namespace MultiTetris {
         }
 
         protected override void Draw(GameTime gameTime) {
-            GraphicsDevice.Clear(Color.LightBlue);
+            GraphicsDevice.Clear(Color.AntiqueWhite);
 
             spriteBatch.Begin();
 

@@ -56,6 +56,7 @@ namespace MultiTetris.GameObjects {
 
             length = GetMaxPosition(buffer).X - GetMinPosition(buffer).X + 1;
 
+            FixPositions();
             SetPositions();
         }
 
@@ -100,6 +101,23 @@ namespace MultiTetris.GameObjects {
             }
 
             length = GetMaxPosition(buffer).X - GetMinPosition(buffer).X + 1;
+
+            for (int i = 0; i < buffer.Length; i++) {
+                Vector2 pos = position + buffer[i];
+
+                int x = (int) pos.X;
+                int y = (int) pos.Y;
+
+                if (y < arena.height && y >= 0 && x >= 0 && x < arena.width) {
+
+                    int id = arena.arena[x, y];
+
+                    if (id != 8) {
+                        rotation--;
+                        Rotate(rotation);
+                    } 
+                }
+            }
         }
 
         public void SetPositions() {
@@ -184,6 +202,16 @@ namespace MultiTetris.GameObjects {
             velRight = rb ? 0 : 1;
         }
 
+        public void FixPositions() {
+
+            if (position.X + length >= arena.width) {
+                position.X = arena.width - length;
+            } else if (position.X < 0) {
+                position.X = 0;
+            }
+
+        }
+
         public void Update(GameTime gameTime) {
             KeyboardState state = Keyboard.GetState();
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -192,11 +220,7 @@ namespace MultiTetris.GameObjects {
                 rotation++;
                 Rotate(rotation);
 
-                if (position.X + length >= arena.width) {
-                    position.X = arena.width - length;
-
-                    Console.WriteLine("Out");
-                }
+                FixPositions();
 
                 space = false;
             } if (state.IsKeyDown(Keys.S) || state.IsKeyDown(Keys.Down)) {               

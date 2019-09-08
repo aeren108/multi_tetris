@@ -91,9 +91,9 @@ namespace MultiTetris.GameObjects {
 
             int rowsFilled = 0;
 
-            for (int i = 0; i < width; i++) {
+            for (int i = 0; i < height; i++) {
                 bool isFilled = true;
-                for (int j = 0; j < height; j++) {
+                for (int j = 0; j < width; j++) {
                     if (arena[j, i] == 8)
                         isFilled = false;
                 }
@@ -106,7 +106,7 @@ namespace MultiTetris.GameObjects {
             }
 
             if (rowsFilled != 0)
-                score += rowsFilled * (rowsFilled + 50);
+                score += rowsFilled * (rowsFilled * 5 + 50);
         }
 
         private Tetromino GenerateTetromino() {
@@ -141,7 +141,7 @@ namespace MultiTetris.GameObjects {
 
             curTetromino.Draw(spriteBatch);
 
-            spriteBatch.DrawString(font, "Score: " + score, new Vector2(blockSize * 17, blockSize), Color.Red);
+            spriteBatch.DrawString(font, "Score: " + score, new Vector2(blockSize * 5, blockSize * 18), Color.Red);
 
             
 
