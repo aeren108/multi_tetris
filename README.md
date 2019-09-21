@@ -1,3 +1,3 @@
-# Multi Tetris
- Multiplayer implementation of tetris
+# Tetris
+ Simple tetris game
 
