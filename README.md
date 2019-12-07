@@ -1,3 +1,3 @@
 # Tetris
- Simple tetris game
+Yet another tetris clone
 
