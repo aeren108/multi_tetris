@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace MultiTetris.GameObjects {
     class Tetromino : GameObject {
         private Vector2[] pattern; // coordinates on 4x4 plane
-        private Vector2[] buffer; // a buffer array
+        public Vector2[] buffer; // a buffer array
         public  Vector2[] positions; // positions of tetromino blocks
         public Vector2 position; // position of tetromino
 
@@ -21,7 +21,7 @@ namespace MultiTetris.GameObjects {
         public int id;
         public bool isLanded = false;
 
-        private float length;
+        public float length;
 
         private int velLeft = 1;
         private int velRight = 1;
@@ -43,7 +43,7 @@ namespace MultiTetris.GameObjects {
 
             positions = new Vector2[pattern.Length];
             buffer = new Vector2[pattern.Length];
-            position = new Vector2(random.Next(0, arena.width), 0);
+            position = new Vector2(4, 0);
 
             for (int i = 0; i < pattern.Length; i++) {
                 Vector2 v = pattern[i];
@@ -56,7 +56,6 @@ namespace MultiTetris.GameObjects {
 
             length = GetMaxPosition(buffer).X - GetMinPosition(buffer).X + 1;
 
-            FixPositions();
             SetPositions();
         }
 
@@ -102,6 +101,7 @@ namespace MultiTetris.GameObjects {
 
             length = GetMaxPosition(buffer).X - GetMinPosition(buffer).X + 1;
 
+            //If tetromino collides after rotation rotate back
             for (int i = 0; i < buffer.Length; i++) {
                 Vector2 pos = position + buffer[i];
 
@@ -130,7 +130,7 @@ namespace MultiTetris.GameObjects {
             }
         }
 
-        private Vector2 GetMinPosition(Vector2[] pos) {
+        public Vector2 GetMinPosition(Vector2[] pos) {
             int minX = 4, minY = 4;
 
             for (int i = 0; i < pos.Length; i++) {

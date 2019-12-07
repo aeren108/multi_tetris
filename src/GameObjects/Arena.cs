@@ -25,7 +25,7 @@ namespace MultiTetris.GameObjects {
         private Tetromino curTetromino; //Current tetromino which player is controlling
 
         //All tetromino patterns
-        private readonly Vector2[] T = { new Vector2(1, 0), new Vector2(1, 1), new Vector2(1, 2), new Vector2(0, 1) };
+        private static readonly Vector2[] T = { new Vector2(1, 0), new Vector2(1, 1), new Vector2(1, 2), new Vector2(0, 1) };
         private static readonly Vector2[] Z = { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 2) };
         private static readonly Vector2[] S = { new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), new Vector2(0, 2) };
         private static readonly Vector2[] L = { new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0), new Vector2(2, 1) };
@@ -34,7 +34,7 @@ namespace MultiTetris.GameObjects {
         private static readonly Vector2[] O = { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0) };
 
         public Arena(int width, int height) {
-            this.width = width ;
+            this.width = width;
             this.height = height;
 
             arena = new int[width, height];
@@ -58,6 +58,14 @@ namespace MultiTetris.GameObjects {
             curTetromino.LoadContent();
         }
 
+        private void ClearArena() {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    arena[i, j] = 8;
+                }
+            }
+        }
+
         private void SaveTetromino(Tetromino t) {
             for (int i = 0; i < t.positions.Length; i++) {
                 Vector2 pos = t.positions[i];
@@ -67,10 +75,18 @@ namespace MultiTetris.GameObjects {
             }
         }
 
-        private void ClearArena() {
-            for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
-                    arena[i, j] = 8;
+        private void GameOver() {
+            ClearArena();
+            Console.WriteLine("Score" + score);
+
+            // TO-DO: Game over screen
+        }
+
+        private void DeleteRow(int row) {
+            for (int i = row; i > 0; i--) {
+                for (int j = 0; j < width; j++) {
+                    //Slide every block
+                    arena[j, i] = arena[j, i - 1];
                 }
             }
         }
@@ -81,16 +97,20 @@ namespace MultiTetris.GameObjects {
             if (curTetromino.isLanded) {
                 SaveTetromino(curTetromino);
 
-                if (curTetromino.GetMaxPosition(curTetromino.positions).Y <= 0) {
-                    GameOver();
-                }
+                if (curTetromino.GetMinPosition(curTetromino.positions).Y <= 0) {
+                    //GameOver();
+                } else {
 
-                curTetromino = new Tetromino(this);
-                curTetromino.LoadContent();
+                    Console.WriteLine(curTetromino.GetMinPosition(curTetromino.positions).Y + " : Y pos");
+
+                    curTetromino = new Tetromino(this);
+                    curTetromino.LoadContent();
+                }
             }
 
             int rowsFilled = 0;
 
+            //Check if any row is filled
             for (int i = 0; i < height; i++) {
                 bool isFilled = true;
                 for (int j = 0; j < width; j++) {
@@ -109,42 +129,20 @@ namespace MultiTetris.GameObjects {
                 score += rowsFilled * (rowsFilled * 5 + 50);
         }
 
-        private Tetromino GenerateTetromino() {
-            Tetromino t = new Tetromino(this);
-
-
-
-            return null;
-        }
-
-        private void GameOver() {
-            ClearArena();
-            Console.WriteLine("Score" + score);
-        }
-
-        private void DeleteRow(int row) {
-            for (int i = row; i > 0; i--) {
-                for (int j = 0; j < width; j++) {
-                    arena[j, i] = arena[j, i-1];
-                }
-            }
-        }
-
         public void Draw(SpriteBatch spriteBatch) {
-            //spriteBatch.Draw(arenaTexture, Vector2.Zero);
+            spriteBatch.DrawString(font, "Score: " + score, new Vector2(blockSize * 5, blockSize * 18), Color.Red); //Draw score
 
+            //Draw background
             for (int i = 0; i < arena.GetLength(0); i++) {
                 for (int j = 0; j < arena.GetLength(1); j++) {
                     spriteBatch.Draw(Assets.ARENA, new Vector2(i * blockSize, j * blockSize));
                 }
             }
 
-            curTetromino.Draw(spriteBatch);
+            //Draw current tetromino
+            curTetromino.Draw(spriteBatch); 
 
-            spriteBatch.DrawString(font, "Score: " + score, new Vector2(blockSize * 5, blockSize * 18), Color.Red);
-
-            
-
+            //Draw landed tetrominoes
             for (int i = 0; i < arena.GetLength(0); i++) {
                 for (int j = 0; j < arena.GetLength(1); j++) {
                     int id = arena[i, j];
