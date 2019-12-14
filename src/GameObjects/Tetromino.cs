@@ -58,16 +58,6 @@ namespace MultiTetris.GameObjects {
             buffer = (Vector2[]) pattern.Clone();
             position = new Vector2(4, 0);
 
-            Console.WriteLine("Buffer");
-            foreach (Vector2 v in buffer) {
-                Console.WriteLine(v.X + "," + v.Y);
-            }
-
-            Console.WriteLine("Pattern");
-            foreach (Vector2 v in pattern) {
-                Console.WriteLine(v.X + "," + v.Y);
-            }
-
             SetPositions();
         }
 
@@ -118,7 +108,6 @@ namespace MultiTetris.GameObjects {
             for (int i = 0; i < positions.Length; i++) {
                 positions[i] = buffer[i] - minVec;
                 positions[i] += position;
-
             }
         }
 
