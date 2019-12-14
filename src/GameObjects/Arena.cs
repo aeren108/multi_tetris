@@ -21,32 +21,13 @@ namespace MultiTetris.GameObjects {
         
         private int score = 0;
 
-        public static Dictionary<int, Vector2[]> PATTERNS;
         private Tetromino curTetromino; //Current tetromino which player is controlling
-
-        //All tetromino patterns
-        private static readonly Vector2[] T = { new Vector2(1, 0), new Vector2(1, 1), new Vector2(1, 2), new Vector2(0, 1) };
-        private static readonly Vector2[] Z = { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 2) };
-        private static readonly Vector2[] S = { new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), new Vector2(0, 2) };
-        private static readonly Vector2[] L = { new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0), new Vector2(2, 1) };
-        private static readonly Vector2[] J = { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 0), new Vector2(2, 0) };
-        private static readonly Vector2[] I = { new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0), new Vector2(3, 0) };
-        private static readonly Vector2[] O = { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0) };
 
         public Arena(int width, int height) {
             this.width = width;
             this.height = height;
 
             arena = new int[width, height];
-            PATTERNS = new Dictionary<int, Vector2[]>();
-
-            PATTERNS.Add(0, T);
-            PATTERNS.Add(1, Z);
-            PATTERNS.Add(2, S);
-            PATTERNS.Add(3, L);
-            PATTERNS.Add(4, J);
-            PATTERNS.Add(5, I);
-            PATTERNS.Add(6, O);
 
             ClearArena();
             curTetromino = new Tetromino(this);      

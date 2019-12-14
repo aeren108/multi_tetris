@@ -20,8 +20,11 @@ namespace MultiTetris.GameObjects {
         private int rotation = 0; //Rotation value 0 = 0, 1 = 90, 2 = 180, 3 = 270;
         public int id;
         public bool isLanded = false;
-
-        public float length;
+        public float length {
+            get {
+                return GetMaxPosition(buffer).X - GetMinPosition(buffer).X + 1;
+            }
+        }
 
         private int velLeft = 1;
         private int velRight = 1;
@@ -36,25 +39,34 @@ namespace MultiTetris.GameObjects {
 
         private Random random = new Random();
 
+        //All tetromino patterns
+        private static readonly Vector2[] T = { new Vector2(1, 0), new Vector2(1, 1), new Vector2(1, 2), new Vector2(0, 1) };
+        private static readonly Vector2[] Z = { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 2) };
+        private static readonly Vector2[] S = { new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), new Vector2(0, 2) };
+        private static readonly Vector2[] L = { new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0), new Vector2(2, 1) };
+        private static readonly Vector2[] J = { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 0), new Vector2(2, 0) };
+        private static readonly Vector2[] I = { new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0), new Vector2(3, 0) };
+        private static readonly Vector2[] O = { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0) };
+        public static readonly Dictionary<int, Vector2[]> PATTERNS = new Dictionary<int, Vector2[]> { { 0, T }, { 1, Z }, { 2, S }, { 3, L }, { 4, J }, { 5, I }, { 6, O } };
+
         public Tetromino(Arena arena) {
             this.arena = arena;
             id = random.Next(0, 7);
-            pattern = Arena.PATTERNS[id];
+            pattern = PATTERNS[id];
 
             positions = new Vector2[pattern.Length];
-            buffer = new Vector2[pattern.Length];
+            buffer = (Vector2[]) pattern.Clone();
             position = new Vector2(4, 0);
 
-            for (int i = 0; i < pattern.Length; i++) {
-                Vector2 v = pattern[i];
-                int index = (int) (v.X + (v.Y * 4)); // index on 1 dimensional array (from 4x4 plane);
-                int valX = (int) (index % 4);
-                int valY = (int) (index / 4);
-
-                buffer[i] = new Vector2(valX, valY);
+            Console.WriteLine("Buffer");
+            foreach (Vector2 v in buffer) {
+                Console.WriteLine(v.X + "," + v.Y);
             }
 
-            length = GetMaxPosition(buffer).X - GetMinPosition(buffer).X + 1;
+            Console.WriteLine("Pattern");
+            foreach (Vector2 v in pattern) {
+                Console.WriteLine(v.X + "," + v.Y);
+            }
 
             SetPositions();
         }
@@ -98,26 +110,6 @@ namespace MultiTetris.GameObjects {
                     }
                     break;
             }
-
-            length = GetMaxPosition(buffer).X - GetMinPosition(buffer).X + 1;
-
-            //If tetromino collides after rotation rotate back
-            for (int i = 0; i < buffer.Length; i++) {
-                Vector2 pos = position + buffer[i];
-
-                int x = (int) pos.X;
-                int y = (int) pos.Y;
-
-                if (y < arena.height && y >= 0 && x >= 0 && x < arena.width) {
-
-                    int id = arena.arena[x, y];
-
-                    if (id != 8) {
-                        rotation--;
-                        Rotate(rotation);
-                    } 
-                }
-            }
         }
 
         public void SetPositions() {
@@ -144,7 +136,6 @@ namespace MultiTetris.GameObjects {
             }
 
             return new Vector2(minX, minY);
-
         }
 
         public Vector2 GetMaxPosition(Vector2[] pos) {
@@ -202,6 +193,26 @@ namespace MultiTetris.GameObjects {
             velRight = rb ? 0 : 1;
         }
 
+        private bool isOverlapping() {
+            for (int i = 0; i < buffer.Length; i++) {
+                Vector2 pos = position + buffer[i];
+
+                int x = (int) pos.X;
+                int y = (int) pos.Y;
+
+                if (y < arena.height && y >= 0 && x >= 0 && x < arena.width) {
+
+                    int id = arena.arena[x, y];
+
+                    if (id != 8) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public void FixPositions() {
 
             if (position.X + length >= arena.width) {
@@ -217,8 +228,11 @@ namespace MultiTetris.GameObjects {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if (state.IsKeyDown(Keys.Space) && space) {
-                rotation++;
-                Rotate(rotation);
+                Rotate(++rotation);
+
+                //If tetromino collides after rotation rotate back
+                if (isOverlapping())
+                    Rotate(--rotation);
 
                 FixPositions();
 
